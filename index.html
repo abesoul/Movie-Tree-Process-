@@ -1,16 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Quote Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f7f7f7;
+            transition: background-color 0.3s;
+        }
+
+        #quote-box {
+            text-align: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            transition: all 0.3s;
+        }
+
+        #text {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+
+        #author {
+            font-size: 18px;
+            color: #888;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .btn-dark {
+            background-color: #343a40;
+            color: white;
+        }
+
+        .dark-mode {
+            background-color: #333;
+            color: white;
+        }
+
+        .dark-mode #quote-box {
+            background-color: #444;
+            color: white;
+        }
+
+        .dark-mode .btn {
+            background-color: #555;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #quote-box {
+            max-width: 400px;
+            width: 100%;
+        }
+
+        #tweet-quote {
+            background-color: #1DA1F2;
+        }
+
+        #quote-image {
+            display: none;
+        }
+
+    </style>
+</head>
 <body>
-  <h1 id="title">Movie Sales Tree Map</h1>
-  <p id="description">
-    This tree map visualizes the sales of different movie genres using a hierarchical structure, where each tile represents a genre, and the area corresponds to the sales value.
-  </p>
 
-  <div id="tooltip"></div>
+<div id="quote-box" class="container">
+    <div id="text" class="quote-text">"The only limit to our realization of tomorrow is our doubts of today."</div>
+    <div id="author" class="quote-author">- Franklin D. Roosevelt</div>
+    <button id="new-quote" class="btn btn-primary">New Quote</button>
+    <button id="copy-quote" class="btn btn-info">Copy Quote</button>
+    <a href="https://twitter.com/intent/tweet" id="tweet-quote" class="btn btn-info" target="_blank">Tweet Quote</a>
+    <button id="toggle-dark-mode" class="btn btn-dark">Toggle Dark Mode</button>
+    <button id="download-quote" class="btn btn-info">Download as Image</button>
+</div>
 
-  <svg id="tree-map"></svg>
+<script>
+    // List of 400 quotes
+    const quotes = [
+        { quote: "If opportunity doesn’t knock, build a door.", author: "Milton Berle" },
+        { quote: "Don’t wait. The time will never be just right.", author: "Napoleon Hill" },
+        { quote: "The best time to plant a tree was 20 years ago. The second best time is now.", author: "Chinese Proverb" },
+        { quote: "Life isn’t about finding yourself. It’s about creating yourself.", author: "George Bernard Shaw" },
+        { quote: "It does not matter how slowly you go as long as you do not stop.", author: "Confucius" },
+        { quote: "It always seems impossible until it’s done.", author: "Nelson Mandela" },
+        { quote: "Everything you can imagine is real.", author: "Pablo Picasso" },
+        { quote: "Don’t limit your challenges, challenge your limits.", author: "Unknown" },
+        { quote: "To live is the rarest thing in the world. Most people exist, that is all.", author: "Oscar Wilde" },
+        { quote: "In three words I can sum up everything I've learned about life: it goes on.", author: "Robert Frost" },
+        { quote: "You miss 100% of the shots you don’t take.", author: "Wayne Gretzky" },
+        // Add the rest of your quotes here...
+    ];
 
-  <div id="legend"></div>
+    // Function to generate a random quote
+    function getRandomQuote() {
+        const randomIndex = Math.floor(Math.random() * quotes.length);
+        return quotes[randomIndex];
+    }
 
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/d3-hierarchy@3.1.0/dist/d3-hierarchy.min.js"></script>
-  <script src="script.js"></script>
+    // Function to display the new quote
+    function displayQuote() {
+        const quote = getRandomQuote();
+        document.getElementById('text').textContent = `"${quote.quote}"`;
+        document.getElementById('author').textContent = `- ${quote.author}`;
+    }
+
+    // Function to toggle dark mode
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+    }
+
+    // Function to copy quote to clipboard
+    function copyQuote() {
+        const quoteText = document.getElementById('text').textContent + " " + document.getElementById('author').textContent;
+        navigator.clipboard.writeText(quoteText).then(() => {
+            alert('Quote copied to clipboard!');
+        });
+    }
+
+    // Function to share quote on Twitter
+    function tweetQuote() {
+        const quoteText = document.getElementById('text').textContent + " " + document.getElementById('author').textContent;
+        const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(quoteText)}`;
+        window.open(tweetUrl, "_blank");
+    }
+
+    // Function to download quote as an image
+    function downloadQuoteAsImage() {
+        const quoteBox = document.getElementById('quote-box');
+        html2canvas(quoteBox).then(canvas => {
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = 'quote.png';
+            link.click();
+        });
+    }
+
+    // Event listeners
+    document.getElementById('new-quote').addEventListener('click', displayQuote);
+    document.getElementById('toggle-dark-mode').addEventListener('click', toggleDarkMode);
+    document.getElementById('copy-quote').addEventListener('click', copyQuote);
+    document.getElementById('tweet-quote').addEventListener('click', tweetQuote);
+    document.getElementById('download-quote').addEventListener('click', downloadQuoteAsImage);
+
+    // Initial quote display
+    displayQuote();
+
+</script>
+<!-- Include html2canvas.js library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+
 </body>
+</html>
